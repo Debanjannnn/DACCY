@@ -38,7 +38,7 @@ We faced inconsistencies with the Gemini AI model's content generation. To overc
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/Debanjannnn/Daccy
+   git clone https://github.com/RAVEYUS/Codu.git
    ```
 2. Navigate to the project directory:
    ```bash

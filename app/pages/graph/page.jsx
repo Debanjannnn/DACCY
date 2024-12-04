@@ -39,6 +39,9 @@ export default function ArrayMethodsExplorer() {
 
   // Fetch AI response for the selected topic
   const fetchAIResponse = async (topic) => {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 seconds timeout
+  
     try {
       const response = await fetch('/api/visual-learning', {
         method: 'POST',
@@ -49,21 +52,30 @@ export default function ArrayMethodsExplorer() {
           selectedTopic: topic,
           language: "JavaScript",
         }),
+        signal: controller.signal, // Attach the signal to fetch
       });
-
+  
+      clearTimeout(timeoutId);
+  
       if (!response.ok) {
         throw new Error('Failed to fetch AI response');
       }
-
+  
       const data = await response.json();
-      setAiResponses((prev) => ({ ...prev, [topic]: data.reply })); // Store the response in state
+      setAiResponses((prev) => ({ ...prev, [topic]: data.reply }));
     } catch (error) {
       console.error('Error fetching AI response:', error);
-      setAiResponses((prev) => ({ ...prev, [topic]: "Sorry, an error occurred while fetching the response." }));
+      setAiResponses((prev) => ({
+        ...prev,
+        [topic]: error.name === 'AbortError' 
+          ? "Request timed out. Please try again." 
+          : "Sorry, an error occurred while fetching the response.",
+      }));
     }
-  }
+  };
+  
 
-  // Handle clicks outside the popup (memoized)
+  // Handle clicks outside the popup (memoized) 
   const handleClickOutside = useCallback((event) => {
     if (popupRef.current && !popupRef.current.contains(event.target)) {
       setSelectedTopic(null)
@@ -80,13 +92,16 @@ export default function ArrayMethodsExplorer() {
 
   // Handle chat submit
   const handleChatSubmit = async (e) => {
-    e.preventDefault()
-    if (!inputMessage.trim()) return
-
-    const newMessage = { role: 'user', content: inputMessage }
-    setChatMessages([...chatMessages, newMessage])
-    setInputMessage("")
-
+    e.preventDefault();
+    if (!inputMessage.trim()) return;
+  
+    const newMessage = { role: 'user', content: inputMessage };
+    setChatMessages([...chatMessages, newMessage]);
+    setInputMessage("");
+  
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 seconds timeout
+  
     try {
       const response = await fetch('/api/chat', {
         method: 'POST',
@@ -94,19 +109,26 @@ export default function ArrayMethodsExplorer() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ message: inputMessage }),
-      })
-
+        signal: controller.signal, // Attach the signal to fetch
+      });
+  
+      clearTimeout(timeoutId);
+  
       if (!response.ok) {
-        throw new Error('Failed to fetch chat response')
+        throw new Error('Failed to fetch chat response');
       }
-
-      const data = await response.json()
-      setChatMessages(prevMessages => [...prevMessages, { role: 'assistant', content: data.reply }])
+  
+      const data = await response.json();
+      setChatMessages((prevMessages) => [...prevMessages, { role: 'assistant', content: data.reply }]);
     } catch (error) {
-      console.error('Error fetching chat response:', error)
-      setChatMessages(prevMessages => [...prevMessages, { role: 'assistant', content: "Sorry, an error occurred." }])
+      console.error('Error fetching chat response:', error);
+      setChatMessages((prevMessages) => [
+        ...prevMessages,
+        { role: 'assistant', content: error.name === 'AbortError' ? "Request timed out. Please try again." : "Sorry, an error occurred." },
+      ]);
     }
-  }
+  };
+  
 
   return (
     <div className="min-h-screen bg-background">

@@ -1,4 +1,5 @@
 "use client"
+
 import { useState } from "react"
 import { Moon, Sun, Network, GitBranch, Layers, Workflow } from "lucide-react"
 import { Button } from "@/components/ui/button"
@@ -13,7 +14,7 @@ import {
 import { Badge } from "@/components/ui/badge"
 import { useTheme } from "next-themes"
 import { motion } from "framer-motion"
-import Link from "next/link"
+import Link from "next/link"  // Import Link from Next.js
 import { NavbarComponent } from "@/components/navbar"
 
 export default function Component() {
@@ -33,12 +34,12 @@ export default function Component() {
     ]
 
     const puzzles = [
-        { title: "The Palindromic Labyrinth", category: "Arrays & Strings", difficulty: "Medium" },
-        { title: "Binary Tree's Hidden Treasure", category: "Trees & Graphs", difficulty: "Hard" },
-        { title: "The Fibonacci Fortress", category: "Dynamic Programming", difficulty: "Medium" },
-        { title: "Quicksort's Time Warp", category: "Sorting & Searching", difficulty: "Hard" },
-        { title: "Anagram Archipelago", category: "Arrays & Strings", difficulty: "Easy" },
-        { title: "The Dijkstra Dimension", category: "Trees & Graphs", difficulty: "Medium" },
+        { id: "p1", title: "The Palindromic Labyrinth", category: "Arrays & Strings", difficulty: "Medium" },
+        { id: "p2", title: "Binary Tree's Hidden Treasure", category: "Trees & Graphs", difficulty: "Hard" },
+        { id: "p3", title: "The Fibonacci Fortress", category: "Dynamic Programming", difficulty: "Medium" },
+        { id: "p4", title: "Quicksort's Time Warp", category: "Sorting & Searching", difficulty: "Hard" },
+        { id: "p5", title: "Anagram Archipelago", category: "Arrays & Strings", difficulty: "Easy" },
+        { id: "p6", title: "The Dijkstra Dimension", category: "Trees & Graphs", difficulty: "Medium" },
     ]
 
     const cardVariants = {
@@ -48,7 +49,7 @@ export default function Component() {
 
     return (
         <div className="min-h-screen bg-background text-foreground flex flex-col">
-           <NavbarComponent showBackButton={true} backButtonRoute="/pages/interface" />
+            <NavbarComponent showBackButton={true} backButtonRoute="/pages/interface" />
             <main className="container mx-auto p-6">
                 <section className="mb-12">
                     <h2 className="text-3xl font-sans mb-4">Algorithm Realms</h2>
@@ -90,15 +91,15 @@ export default function Component() {
                                     borderColor: theme === "dark" ? "#fff" : "#000",
                                     borderWidth: "2px",
                                 }}
-                                className="rounded-lg overflow-hidden h-[300px] flex flex-col"
+                                className="rounded-lg overflow-hidden flex flex-col h-full"  // Ensure the card takes full height
                             >
                                 <div className="flex-grow flex flex-col">
-                                    <Card className="flex-grow">
-                                        <CardHeader>
+                                    <Card className="flex-grow h-full">
+                                        <CardHeader className="flex-grow">
                                             <CardTitle>{puzzle.title}</CardTitle>
                                             <CardDescription>{puzzle.category}</CardDescription>
                                         </CardHeader>
-                                        <CardContent>
+                                        <CardContent className="flex-grow">
                                             <Badge
                                                 variant={
                                                     puzzle.difficulty === "Easy"
@@ -111,8 +112,13 @@ export default function Component() {
                                                 {puzzle.difficulty}
                                             </Badge>
                                         </CardContent>
-                                        <CardFooter>
-                                            <Button className="w-full">Embark on Quest</Button>
+                                        <CardFooter className="flex justify-center">
+                                            {/* Wrap the Button with Link */}
+                                            <Link href={`/pages/puzzles/${puzzle.id}`} className="w-full">
+                                                <Button className="w-full">
+                                                    Embark on Quest
+                                                </Button>
+                                            </Link>
                                         </CardFooter>
                                     </Card>
                                 </div>

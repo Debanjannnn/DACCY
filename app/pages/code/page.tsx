@@ -10,6 +10,7 @@ import { useTheme } from "next-themes";
 import Editor from "@monaco-editor/react";
 import React from 'react';
 import { NavbarComponent } from '@/components/navbar';
+import { CodeEditorWithPistonProps } from '@/components/ui/CodeEditorChallenge';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -138,7 +139,7 @@ export default function AIDebugChallenge() {
                     <SelectContent>
                       <SelectItem value="python">Python</SelectItem>
                       <SelectItem value="c">C</SelectItem>
-                      <SelectItem value="cpp">C++</SelectItem>
+                      <SelectItem value="c++">C++</SelectItem>
                       <SelectItem value="java">Java</SelectItem>
                     </SelectContent>
                   </Select>
@@ -218,7 +219,7 @@ export default function AIDebugChallenge() {
                 </CardHeader>
                 <CardContent>
                   <div className="bg-muted p-4 rounded-md overflow-x-auto">
-                    <Editor height="66vh" theme={theme === 'dark' ? 'vs-dark' : 'light'} language={language} value={buggyCode} />
+                   <CodeEditorWithPistonProps code={buggyCode} language={language} darkMode={theme === 'dark'} />
                   </div>
                   <Button
                     onClick={handleCheckCode}
